@@ -1,0 +1,82 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+  batch: true # when a pipeline is running, the system waits until the run is completed, then starts another run with all changes that have not yet been built.
+  branches:
+    include:
+    - refs/heads/develop
+    - refs/heads/master
+  paths:
+    include:
+    - '*' # same as '/' for the repository root
+    exclude:
+    - "README.md" # no documentation. Wildcard '*' is somehow not working in paths
+    - 'README.MD'
+
+## Pull-requests with target will trigger the pipeline
+pr:
+  - master
+  - develop
+
+variables:  
+- name: version.MajorMinor
+  value: 'x0.1' # Manually adjust the version number as needed for semantic versioning. Revision is auto-incremented.   
+- name: patchScope
+  value: ${{variables['version.MajorMinor']}}-${{variables['Build.SourceBranchName']}}
+- name: version.Revision
+  value: $[counter(variables['patchScope'], 0)]
+- name: versionNumber
+  value: '$(version.MajorMinor).$(version.Revision)'
+- name: gitID
+  value: $(Build.SourceVersion)
+- name: applicationName
+  value: $(Build.Repository.Name)
+
+stages:
+  ####################################
+  ## Build the application and push docker image to registry
+  ## 
+  ####################################
+  - stage: stage_app_build
+    displayName: 'Build GO'
+    jobs:
+    - job: job_build
+      displayName: 'Build GO Library'
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      ##################################################################
+      ## git check out
+      - checkout: self
+        # persit creds for later use by git command to set the git tag
+        persistCredentials: true
+      - task: Go@0
+        inputs:
+          command: 'build'
+          arguments: './...'
+      - task: Go@0
+        inputs:
+          command: 'test'
+          arguments: './...'
+      ###################################################################
+      ## Create a tag in Git after successfull build of the docker image
+      - bash: |
+          echo "### Create git tag for version $APP_VERSION"
+          git config --global user.name "Azure DevOps ${{variables['Build.DefinitionName']}}"
+          git config --global user.email "azure-devops@placons.com"
+          git tag -a $APP_VERSION -m "Release tag for Docker image $DOCKER_TAGS"
+          git config --list
+          git push origin $APP_VERSION
+        displayName: Create Git tag for release
+        # only create a tag if pipeline is on branch 'master'
+        condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+        workingDirectory: $(Build.SourcesDirectory)
+        env:
+          APP_VERSION: '$(versionNumber)'          
+
+
