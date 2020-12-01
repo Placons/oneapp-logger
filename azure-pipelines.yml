@@ -39,7 +39,7 @@ variables:
 
 stages:
   ####################################
-  ## Build the application and push docker image to registry
+  ## Build the application and tag github repository
   ## 
   ####################################
   - stage: stage_app_build
@@ -64,12 +64,12 @@ stages:
           command: 'test'
           arguments: './...'
       ###################################################################
-      ## Create a tag in Git after successfull build of the docker image
+      ## Create a tag in Git after successfull build
       - bash: |
           echo "### Create git tag for version $APP_VERSION"
           git config --global user.name "Azure DevOps ${{variables['Build.DefinitionName']}}"
           git config --global user.email "azure-devops@placons.com"
-          git tag -a $APP_VERSION -m "Release tag for Docker image $DOCKER_TAGS"
+          git tag -a $APP_VERSION -m "Release tag"
           git config --list
           git push origin $APP_VERSION
         displayName: Create Git tag for release
