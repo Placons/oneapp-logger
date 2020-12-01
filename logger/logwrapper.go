@@ -15,6 +15,8 @@ const (
 	ResponseParsingError   ErrorType = "ResponseParsingError"
 )
 
+var LoggingLevels = logrus.AllLevels
+
 type Event struct {
 	errorType ErrorType
 	message   string
@@ -79,6 +81,11 @@ func (l *StandardLogger) Debug(message string) {
 func (l *StandardLogger) Warn(message string) {
 	l.withStandardFields().Warn(message)
 }
+
+func (l *StandardLogger) ParseLevel(level string) (logrus.Level, error) {
+	return logrus.ParseLevel(level)
+}
+
 func (l *StandardLogger) withStandardFields() *logrus.Entry {
 	standardFields := logrus.Fields{
 		"appname": l.appname,

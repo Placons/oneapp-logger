@@ -36,3 +36,11 @@ Example logging
 ```
 {"appname":"oneapp-logs-playground","level":"error","msg":"Downstream service failed due to http status 500","time":"2020-11-27T08:59:12+02:00"}
 ```
+
+Logging Levels
+You can set the logging level on a Logger, then it will only log entries with that severity or anything above it. The library is exposing ERROR, WARN, INFO, DEBUG, TRACE.
+The default logging level is info and you may override this and set it for example to debug:
+```
+standardLogger.Level = logger.ParseLevel("DEBUG")
+```
+
