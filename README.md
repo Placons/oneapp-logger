@@ -41,6 +41,6 @@ Logging Levels
 You can set the logging level on a Logger, then it will only log entries with that severity or anything above it. The library is exposing ERROR, WARN, INFO, DEBUG, TRACE.
 The default logging level is info and you may override this and set it for example to debug:
 ```
-standardLogger.Level = logger.ParseLevel("DEBUG")
+standardLogger.SetLoggingLevel("DEBUG")
 ```
 

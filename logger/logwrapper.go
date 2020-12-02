@@ -2,6 +2,7 @@ package logger
 
 import (
 	"io"
+	"log"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -82,8 +83,14 @@ func (l *StandardLogger) Warn(message string) {
 	l.withStandardFields().Warn(message)
 }
 
-func (l *StandardLogger) ParseLevel(level string) (logrus.Level, error) {
-	return logrus.ParseLevel(level)
+func (l *StandardLogger) SetLoggingLevel(lvl string) {
+	level, err := logrus.ParseLevel(lvl)
+	if err != nil {
+		log.Printf("Unknown logging level %s found. Falling back to INFO", lvl)
+		l.Level = logrus.InfoLevel
+		return
+	}
+	l.Level = level
 }
 
 func (l *StandardLogger) withStandardFields() *logrus.Entry {
