@@ -71,6 +71,9 @@ func (l *StandardLogger) LogResponseParsingError(argumentName string) {
 	l.withStandardFields().Errorf(responseParsingError.message)
 }
 
+func (l *StandardLogger) Trace(message string) {
+	l.withStandardFields().Trace(message)
+}
 func (l *StandardLogger) Info(message string) {
 	l.withStandardFields().Info(message)
 }
