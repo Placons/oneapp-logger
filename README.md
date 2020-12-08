@@ -8,12 +8,16 @@ Under the hood it is using [logrus](https://github.com/sirupsen/logrus)
 Import oneapp-logger
 ```
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-
 	"github.com/Placons/oneapp-logger/logger"
 )
+```
+or 
+```
+go get github.com/Placons/oneapp-logger
+```
+In case you are stuck with a specific verison and can't get the latest one:
+```
+export GOSUMDB=off
 ```
 
 From your service initialize a standard logger passing the application's name. By default this is producing logs in json format
@@ -44,3 +48,5 @@ The default logging level is info and you may override this and set it for examp
 standardLogger.SetLoggingLevel("DEBUG")
 ```
 
+Gotchas
+When 
