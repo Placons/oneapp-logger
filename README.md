@@ -47,6 +47,3 @@ The default logging level is info and you may override this and set it for examp
 ```
 standardLogger.SetLoggingLevel("DEBUG")
 ```
-
-Gotchas
-When 
