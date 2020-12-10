@@ -74,6 +74,7 @@ func (l *StandardLogger) LogResponseParsingError(argumentName string) {
 func (l *StandardLogger) Trace(message string) {
 	l.withStandardFields().Trace(message)
 }
+
 func (l *StandardLogger) Info(message string) {
 	l.withStandardFields().Info(message)
 }
@@ -84,6 +85,29 @@ func (l *StandardLogger) Debug(message string) {
 
 func (l *StandardLogger) Warn(message string) {
 	l.withStandardFields().Warn(message)
+}
+
+func (l *StandardLogger) Error(message string) {
+	l.withStandardFields().Error(message)
+}
+
+func (l *StandardLogger) Tracef(message string) {
+	l.withStandardFields().Trace(message)
+}
+func (l *StandardLogger) Infof(message string) {
+	l.withStandardFields().Infof(message)
+}
+
+func (l *StandardLogger) Debugf(message string) {
+	l.withStandardFields().Debugf(message)
+}
+
+func (l *StandardLogger) Warnf(message string) {
+	l.withStandardFields().Warnf(message)
+}
+
+func (l *StandardLogger) Errorf(message string) {
+	l.withStandardFields().Errorf(message)
 }
 
 func (l *StandardLogger) SetLoggingLevel(lvl string) {
