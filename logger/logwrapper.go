@@ -91,11 +91,32 @@ func (l *StandardLogger) Error(message string) {
 	l.withStandardFields().Error(message)
 }
 
+func (l *StandardLogger) ErrorWithErr(message string, err error) {
+	l.withStandardFields().WithField("errorTrace", err).Error(message)
+}
+
+func (l *StandardLogger) ErrorWithErrAndFields(message string, err error, fields map[string]interface{}) {
+	l.withFields(fields).WithField("errorTrace", err).Error(message)
+}
+
 func (l *StandardLogger) Tracef(message string, args ...interface{}) {
 	l.withStandardFields().Tracef(message, args...)
 }
+
 func (l *StandardLogger) Infof(message string, args ...interface{}) {
 	l.withStandardFields().Infof(message, args...)
+}
+
+func (l *StandardLogger) DebugWithFields(message string, fields map[string]interface{}) {
+	l.withFields(fields).Debug(message)
+}
+
+func (l *StandardLogger) InfoWithFields(message string, fields map[string]interface{}) {
+	l.withFields(fields).Info(message)
+}
+
+func (l *StandardLogger) WarnWithFields(message string, fields map[string]interface{}) {
+	l.withFields(fields).Warn(message)
 }
 
 func (l *StandardLogger) Debugf(message string, args ...interface{}) {
@@ -126,4 +147,8 @@ func (l *StandardLogger) withStandardFields() *logrus.Entry {
 	}
 
 	return l.WithFields(standardFields)
+}
+
+func (l *StandardLogger) withFields(fields map[string]interface{}) *logrus.Entry {
+	return l.withStandardFields().WithFields(fields)
 }
