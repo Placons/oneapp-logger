@@ -92,22 +92,22 @@ func (l *StandardLogger) Error(message string) {
 }
 
 func (l *StandardLogger) Tracef(message string, args ...interface{}) {
-	l.withStandardFields().Trace(message, args)
+	l.withStandardFields().Tracef(message, args...)
 }
 func (l *StandardLogger) Infof(message string, args ...interface{}) {
-	l.withStandardFields().Infof(message, args)
+	l.withStandardFields().Infof(message, args...)
 }
 
 func (l *StandardLogger) Debugf(message string, args ...interface{}) {
-	l.withStandardFields().Debugf(message, args)
+	l.withStandardFields().Debugf(message, args...)
 }
 
 func (l *StandardLogger) Warnf(message string, args ...interface{}) {
-	l.withStandardFields().Warnf(message, args)
+	l.withStandardFields().Warnf(message, args...)
 }
 
 func (l *StandardLogger) Errorf(message string, args ...interface{}) {
-	l.withStandardFields().Errorf(message, args)
+	l.withStandardFields().Errorf(message, args...)
 }
 
 func (l *StandardLogger) SetLoggingLevel(lvl string) {
