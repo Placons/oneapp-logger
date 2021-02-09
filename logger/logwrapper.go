@@ -52,7 +52,16 @@ func (l *StandardLogger) WarnWithFields(message string, fields map[string]interf
 
 func (l *StandardLogger) Audit(message string) {
 	// log level will actually be exchanged in the audit hook
-	l.withFields(map[string]interface{}{"type": "audit"}).Error(message)
+	l.AuditWithFields(message, nil)
+}
+
+func (l *StandardLogger) AuditWithFields(message string, fields map[string]interface{}) {
+	if fields == nil {
+		fields = map[string]interface{}{}
+	}
+	fields["type"] = "audit"
+	// log level will actually be exchanged in the audit hook
+	l.withFields(fields).Error(message)
 }
 
 func (l *StandardLogger) SetLoggingLevel(lvl string) {

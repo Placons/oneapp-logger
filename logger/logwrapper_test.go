@@ -101,7 +101,6 @@ func TestStandardLogger_DebugWithoutCallerEnv(t *testing.T) {
 	}
 }
 
-// test if caller information (like "function") is *not* logged on all levels if environment LOG_CALLER_ALL_LEVELS is not present
 func TestStandardLogger_Audit(t *testing.T) {
 	l, buf := prepareLogger()
 	defer func() {
@@ -115,6 +114,21 @@ func TestStandardLogger_Audit(t *testing.T) {
 	}
 	if !strings.Contains(buf.String(), "\"level\":\"info\"") {
 		t.Errorf("Log message does not contain info level: %s", buf.String())
+	}
+}
+
+func TestStandardLogger_AuditWithFields(t *testing.T) {
+	l, buf := prepareLogger()
+	defer func() {
+		l.SetOutput(os.Stderr)
+	}()
+
+	l.AuditWithFields("user updated goal count", map[string]interface{}{
+		"goals": 1,
+	})
+	// log message should contain goals
+	if !strings.Contains(buf.String(), "goals\":1") {
+		t.Errorf("Log message does goals field: %s", buf.String())
 	}
 }
 
