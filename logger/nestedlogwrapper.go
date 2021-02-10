@@ -9,6 +9,6 @@ import (
 func (l *StandardLogger) setFormatter() {
 	l.Logger.Formatter = &nested.Formatter{
 		HideKeys:    true,
-		FieldsOrder: []string{"appname"},
+		FieldsOrder: []string{"appname", "package", "function", "line"},
 	}
 }
