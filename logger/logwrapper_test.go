@@ -115,6 +115,9 @@ func TestStandardLogger_Audit(t *testing.T) {
 	if !strings.Contains(buf.String(), "\"level\":\"info\"") {
 		t.Errorf("Log message does not contain info level: %s", buf.String())
 	}
+	if strings.Contains(buf.String(), "function") {
+		t.Errorf("Log message contains caller information: %s", buf.String())
+	}
 }
 
 func TestStandardLogger_AuditWithFields(t *testing.T) {

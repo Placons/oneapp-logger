@@ -79,13 +79,12 @@ This will result in
 ```json
 {
   "appname": "my-test-app",
-  "file": "C:/Users/mkruse/go/pkg/mod/github.com/sirupsen/logrus@v1.7.0/hooks.go",
-  "function": "github.com/sirupsen/logrus.LevelHooks.Fire",
   "level": "info",
-  "line": 28,
-  "msg": "Test",
+  "msg": "user removed budget",
   "time": "2021-02-09T20:30:03+01:00",
-  "type": "audit"
+  "audit": "true",
+  "tinkUserId": "1234",
+  "budgetsChange": "-1"
 }
 ```
 For useful audit logs you should always provide some values:

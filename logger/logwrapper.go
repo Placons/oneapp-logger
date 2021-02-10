@@ -59,7 +59,7 @@ func (l *StandardLogger) AuditWithFields(message string, fields map[string]inter
 	if fields == nil {
 		fields = map[string]interface{}{}
 	}
-	fields["type"] = "audit"
+	fields["audit"] = true
 	// log level will actually be exchanged in the audit hook
 	l.withFields(fields).Error(message)
 }

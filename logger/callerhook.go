@@ -35,6 +35,12 @@ func (CallerHook) Fire(e *logrus.Entry) error {
 			fmt.Println("PANIC in caller hook ", r)
 		}
 	}()
+	if e.Data == nil {
+		e.Data = make(logrus.Fields)
+	}
+	if e.Data["audit"] == true {
+		return nil // do not log caller information on audit logs
+	}
 	targetFrameIndex := 0 + 2
 	programCounters := make([]uintptr, targetFrameIndex+2)
 	n := runtime.Callers(0, programCounters)

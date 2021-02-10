@@ -13,7 +13,7 @@ func (AuditHook) Levels() []logrus.Level {
 }
 
 func (h AuditHook) Fire(e *logrus.Entry) error {
-	if e.Data != nil && e.Data["type"] == "audit" {
+	if e.Data != nil && e.Data["audit"] == true {
 		e.Level = logrus.InfoLevel
 	}
 	return nil
