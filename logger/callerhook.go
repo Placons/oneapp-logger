@@ -45,6 +45,9 @@ func (CallerHook) Fire(e *logrus.Entry) error {
 	if e.Data == nil {
 		e.Data = make(logrus.Fields)
 	}
+	if e.Data["audit"] == true {
+		return nil // do not log caller information on audit logs
+	}
 	e.Data["package"] = getPackageName(frame.Func.Name())
 	e.Data["function"] = getFunctionName(frame.Func.Name())
 	e.Data["line"] = frame.Line
