@@ -5,9 +5,15 @@ import (
 	"github.com/sirupsen/logrus"
 	"os"
 	"runtime"
+	"strings"
 )
 
 const LogCallerAllLevels = "LOG_CALLER_ALL_LEVELS"
+
+var skipPackages = [...]string{"github.com/sirupsen/logrus", "github.com/Placons/oneapp-logger/logger"}
+
+const maximumCallerDepth = 25
+const minimumCallerDepth = 2
 
 type CallerHook struct {
 	levels []logrus.Level
@@ -35,30 +41,65 @@ func (CallerHook) Fire(e *logrus.Entry) error {
 			fmt.Println("PANIC in caller hook ", r)
 		}
 	}()
+	frame := getCaller()
 	if e.Data == nil {
 		e.Data = make(logrus.Fields)
 	}
 	if e.Data["audit"] == true {
 		return nil // do not log caller information on audit logs
 	}
-	targetFrameIndex := 0 + 2
-	programCounters := make([]uintptr, targetFrameIndex+2)
-	n := runtime.Callers(0, programCounters)
-	frame := runtime.Frame{Function: "unknown"}
-	frames := runtime.CallersFrames(programCounters[:n])
-	for more, frameIndex := true, 0; more && frameIndex <= targetFrameIndex; frameIndex++ {
-		var frameCandidate runtime.Frame
-		frameCandidate, more = frames.Next()
-		if frameIndex == targetFrameIndex {
-			frame = frameCandidate
+	e.Data["package"] = getPackageName(frame.Func.Name())
+	e.Data["function"] = getFunctionName(frame.Func.Name())
+	e.Data["line"] = frame.Line
+	return nil
+}
+
+// getCaller retrieves the name of the first non-logrus calling function
+func getCaller() *runtime.Frame {
+	// Restrict the lookback frames to avoid runaway lookups
+	pcs := make([]uintptr, maximumCallerDepth)
+	depth := runtime.Callers(minimumCallerDepth, pcs)
+	frames := runtime.CallersFrames(pcs[:depth])
+
+	for f, again := frames.Next(); again; f, again = frames.Next() {
+		pkg := getPackageName(f.Function)
+
+		// If the caller isn't part of this package, we're done
+		if !isSkipPackage(pkg) {
+			return &f //nolint:scopelint
 		}
 	}
 
-	if e.Data == nil {
-		e.Data = make(logrus.Fields)
-	}
-	e.Data["file"] = frame.File
-	e.Data["function"] = frame.Function
-	e.Data["line"] = frame.Line
+	// if we got here, we failed to find the caller's context
 	return nil
+}
+
+// getPackageName reduces a fully qualified function name to the package name
+func getPackageName(f string) string {
+	for {
+		lastPeriod := strings.LastIndex(f, ".")
+		lastSlash := strings.LastIndex(f, "/")
+		if lastPeriod > lastSlash {
+			f = f[:lastPeriod]
+		} else {
+			break
+		}
+	}
+
+	return f
+}
+
+func getFunctionName(f string) string {
+	lastPeriod := strings.LastIndex(f, ".")
+	f = f[lastPeriod+1:]
+	return f
+}
+
+func isSkipPackage(p string) bool {
+	for _, s := range skipPackages {
+		if s == p {
+			return true
+		}
+	}
+	return false
 }

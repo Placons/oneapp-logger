@@ -102,6 +102,7 @@ func TestStandardLogger_DebugWithoutCallerEnv(t *testing.T) {
 }
 
 func TestStandardLogger_Audit(t *testing.T) {
+	_ = os.Unsetenv(LogCallerAllLevels)
 	l, buf := prepareLogger()
 	defer func() {
 		l.SetOutput(os.Stderr)

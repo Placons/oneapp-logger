@@ -25,7 +25,7 @@ func NewStandardLogger(appName string) *StandardLogger {
 
 	var standardLogger = &StandardLogger{baseLogger}
 
-	standardLogger.Formatter = &logrus.JSONFormatter{}
+	standardLogger.setFormatter()
 
 	return standardLogger
 }
