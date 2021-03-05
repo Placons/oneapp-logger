@@ -71,10 +71,10 @@ Audit logs will ALWAYS be printed and always as Info level regardless of the cur
 ```go
 standardLogger := logger.NewStandardLogger("my-test-app")
 standardLogger.SetLoggingLevel("DEBUG")
-standardLogger.AuditWithOperation("TestMsg", Operation("Test"))
+standardLogger.AuditWithOperation("TestMsg", Operation("test-operation"), Start())
 ```
 
-This will result in
+This will result in (see LogLevel)
 
 ```json
 {
@@ -83,7 +83,17 @@ This will result in
   "msg": "TestMsg",
   "time": "2021-02-09T20:30:03+01:00",
   "audit": "true",
-  "operation": "Test"
+  "operation": "Test",
+  "start": "2021-02-09T20:30:03+01:00"
 }
 ```
-For useful audit logs you should always provide some values:
+For useful audit logs you should always provide some values. The easiest way to use the audit logging is
+to get a special AuditLogger instance that has the operation preset and contains some
+additional utility functions for printing start and end.
+
+This will produce the same output as above.
+```go
+standardLogger := logger.NewStandardLogger("my-test-app")
+auditLogger := standardLogger.Audit("test-operation")
+auditLogger.Start("TestMsg", Operation("Test"))
+```
