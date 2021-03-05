@@ -25,7 +25,7 @@ pr:
 
 variables:  
 - name: version.MajorMinor
-  value: 'v1.2' # Manually adjust the version number as needed for semantic versioning. Revision is auto-incremented.
+  value: 'v1.3' # Manually adjust the version number as needed for semantic versioning. Revision is auto-incremented.
 - name: patchScope
   value: ${{variables['version.MajorMinor']}}-${{variables['Build.SourceBranchName']}}
 - name: version.Revision

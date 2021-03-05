@@ -71,7 +71,7 @@ Audit logs will ALWAYS be printed and always as Info level regardless of the cur
 ```go
 standardLogger := logger.NewStandardLogger("my-test-app")
 standardLogger.SetLoggingLevel("DEBUG")
-standardLogger.Audit("Test")
+standardLogger.AuditWithOperation("TestMsg", Operation("Test"))
 ```
 
 This will result in
@@ -80,11 +80,10 @@ This will result in
 {
   "appname": "my-test-app",
   "level": "info",
-  "msg": "user removed budget",
+  "msg": "TestMsg",
   "time": "2021-02-09T20:30:03+01:00",
   "audit": "true",
-  "tinkUserId": "1234",
-  "budgetsChange": "-1"
+  "operation": "Test"
 }
 ```
 For useful audit logs you should always provide some values:
