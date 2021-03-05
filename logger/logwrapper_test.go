@@ -108,7 +108,7 @@ func TestStandardLogger_Audit(t *testing.T) {
 		l.SetOutput(os.Stderr)
 	}()
 
-	l.Audit("test")
+	l.AuditWithOperation("test", Operation("op"))
 	// log message should not be of level error, but info
 	if strings.Contains(buf.String(), "\"level\":\"error\"") {
 		t.Errorf("Log message does contain error level: %s", buf.String())
@@ -121,17 +121,15 @@ func TestStandardLogger_Audit(t *testing.T) {
 	}
 }
 
-func TestStandardLogger_AuditWithFields(t *testing.T) {
+func TestStandardLogger_AuditWithOperation(t *testing.T) {
 	l, buf := prepareLogger()
 	defer func() {
 		l.SetOutput(os.Stderr)
 	}()
 
-	l.AuditWithFields("user updated goal count", map[string]interface{}{
-		"goals": 1,
-	})
+	l.AuditWithOperation("user updated goal count", Operation("test"))
 	// log message should contain goals
-	if !strings.Contains(buf.String(), "goals\":1") {
+	if !strings.Contains(buf.String(), "operation\":\"test") {
 		t.Errorf("Log message does goals field: %s", buf.String())
 	}
 }

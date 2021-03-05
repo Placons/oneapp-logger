@@ -10,6 +10,7 @@ var LoggingLevels = logrus.AllLevels
 
 type StandardLogger struct {
 	*logrus.Logger
+	appName string
 }
 
 func NewStandardLogger(appName string) *StandardLogger {
@@ -23,7 +24,7 @@ func NewStandardLogger(appName string) *StandardLogger {
 	})
 	baseLogger.SetOutput(os.Stdout)
 
-	var standardLogger = &StandardLogger{baseLogger}
+	var standardLogger = &StandardLogger{baseLogger, appName}
 
 	standardLogger.setFormatter()
 
@@ -50,17 +51,29 @@ func (l *StandardLogger) WarnWithFields(message string, fields map[string]interf
 	l.withFields(fields).Warn(message)
 }
 
-func (l *StandardLogger) Audit(message string) {
-	// log level will actually be exchanged in the audit hook
-	l.AuditWithFields(message, nil)
+func (l *StandardLogger) Audit(op string) *AuditLogger {
+	return newAuditLogger(l, op)
 }
 
-func (l *StandardLogger) AuditWithFields(message string, fields map[string]interface{}) {
-	if fields == nil {
-		fields = map[string]interface{}{}
-	}
-	fields["audit"] = true
+func (l *StandardLogger) AuditWithOperation(message string, operation OperationValue) {
 	// log level will actually be exchanged in the audit hook
+	l.AuditWithOperationAndFields(message, operation, nil)
+}
+
+func (l *StandardLogger) AuditWithOperationAndFields(message string, operation OperationValue, vs ...AuditValue) {
+	fields := map[string]interface{}{}
+	fields["audit"] = true
+	opKey, opValue := operation.Get()
+	fields[opKey] = opValue
+
+	// log level will actually be exchanged in the audit hook
+	for _, a := range vs {
+		if a != nil {
+			k, v := a.Get()
+			fields[k] = v
+		}
+	}
+
 	l.withFields(fields).Error(message)
 }
 
