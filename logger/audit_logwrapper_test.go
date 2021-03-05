@@ -45,6 +45,15 @@ func TestAuditLogger_YoliUser(t *testing.T) {
 	}
 }
 
+func TestAuditLogger_Generic(t *testing.T) {
+	l, buf := prepareAuditLogger()
+	l.Start("Test", Generic("testKey", "testValue"))
+
+	if !strings.Contains(buf.String(), "testKey\":\"testValue") {
+		t.Errorf("Log message not correct: %s", buf.String())
+	}
+}
+
 func prepareAuditLogger() (*AuditLogger, *bytes.Buffer) {
 	sl := NewStandardLogger("my-test-app")
 	al := sl.Audit("operation")

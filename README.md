@@ -83,7 +83,7 @@ This will result in (see LogLevel)
   "msg": "TestMsg",
   "time": "2021-02-09T20:30:03+01:00",
   "audit": "true",
-  "operation": "Test",
+  "operation": "test-operation",
   "start": "2021-02-09T20:30:03+01:00"
 }
 ```
@@ -95,5 +95,23 @@ This will produce the same output as above.
 ```go
 standardLogger := logger.NewStandardLogger("my-test-app")
 auditLogger := standardLogger.Audit("test-operation")
-auditLogger.Start("TestMsg", Operation("Test"))
+auditLogger.Start("TestMsg")
 ```
+
+You can also provide generic values easily and make use of some predefined values.
+```go
+standardLogger := logger.NewStandardLogger("my-test-app")
+auditLogger := standardLogger.Audit("test-operation")
+auditLogger.Start("TestMsg", Generic("testKey", "testValue"), YoliUserId("42"))
+```
+
+Predefined values are
+```
+UserId => userId
+TinkUserId => tinkUserId
+YoliUserId => yoliUserId
+Operation => operation
+Start => start (with current timestamp)
+End => end (with current timestamp)
+```
+
