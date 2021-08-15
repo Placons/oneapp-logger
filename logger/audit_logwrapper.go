@@ -1,17 +1,26 @@
 package logger
 
+import "github.com/google/uuid"
+
 type AuditLogger struct {
 	sl        StandardLogger
 	operation OperationValue
+	uuid      AuditUUIDValue
 }
 
 func newAuditLogger(l *StandardLogger, operation string) *AuditLogger {
-	var standardLogger = &AuditLogger{sl: *l, operation: Operation(operation)}
-	return standardLogger
+	u, err := uuid.NewUUID()
+	if err == nil {
+		var standardLogger = &AuditLogger{sl: *l, operation: Operation(operation), uuid: AuditUUID(u.String())}
+		return standardLogger
+	} else {
+		var standardLogger = &AuditLogger{sl: *l, operation: Operation(operation), uuid: AuditUUID("error")}
+		return standardLogger
+	}
 }
 
 func (l *AuditLogger) Audit(message string) {
-	l.sl.AuditWithOperation(message, l.operation)
+	l.sl.AuditWithOperationAndUUIDAndFields(message, l.operation, l.uuid)
 }
 
 func (l *AuditLogger) Start(message string, vs ...AuditValue) {
@@ -25,5 +34,5 @@ func (l *AuditLogger) End(message string, vs ...AuditValue) {
 }
 
 func (l *AuditLogger) AuditWithFields(message string, vs ...AuditValue) {
-	l.sl.AuditWithOperationAndFields(message, l.operation, vs...)
+	l.sl.AuditWithOperationAndUUIDAndFields(message, l.operation, l.uuid, vs...)
 }

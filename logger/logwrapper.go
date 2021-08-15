@@ -61,10 +61,18 @@ func (l *StandardLogger) AuditWithOperation(message string, operation OperationV
 }
 
 func (l *StandardLogger) AuditWithOperationAndFields(message string, operation OperationValue, vs ...AuditValue) {
+	l.AuditWithOperationAndUUIDAndFields(message, operation, nil, vs...)
+}
+
+func (l *StandardLogger) AuditWithOperationAndUUIDAndFields(message string, operation OperationValue, u AuditUUIDValue, vs ...AuditValue) {
 	fields := map[string]interface{}{}
 	fields["audit"] = true
 	opKey, opValue := operation.Get()
 	fields[opKey] = opValue
+	if u != nil {
+		uKey, uValue := u.Get()
+		fields[uKey] = uValue
+	}
 
 	// log level will actually be exchanged in the audit hook
 	for _, a := range vs {

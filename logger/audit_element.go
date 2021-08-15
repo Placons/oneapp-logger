@@ -17,9 +17,18 @@ type AuditValue interface {
 
 type OperationValue AuditValue
 
+type AuditUUIDValue AuditValue
+
 func Operation(value interface{}) OperationValue {
 	return AuditElement{
 		key:   "operation",
+		value: value,
+	}
+}
+
+func AuditUUID(value string) AuditUUIDValue {
+	return AuditElement{
+		key:   "audit-uuid",
 		value: value,
 	}
 }
